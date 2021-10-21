@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v6.js"></script>
+</head>
+
+<body>
+    <div id="multipleline"></div>  
+</body>      
+
+<script>
+    const width = 450,
+        height = 450,
+        margin = 40;
+
+    const radius = Math.min(width, height) / 2 - margin;
+    
+    let url = "cities_commuter.csv";
+
+    d3.csv(url).then(function(data){
+
+        data.forEach(d =>{
+            for(var i in d){
+                if(!['City'].includes(i)){
+                    d[i] = +d[i];
+                }
+            }
+        });
+
+        
+        const svg = d3.select("#multipleline")
+            // .selectAll("uniqueChart")
+            // .data(cities)
+            // .enter()
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", `translate(${width/2}, ${height/2})`);
+
+        // Colour palette
+        const color = d3.scaleOrdinal()
+            .range(d3.schemeDark2)
+
+        const pie = d3.pie()
+            .value(function(d) {return d[1]})
+
+
+        let cities = d3.groups(data, d => d.City);
+        console.log('cities',cities);
+
+        let citiez = Object.entries(cities);
+        console.log('citiez', citiez);
+        
+        const data_ready = pie(citiez)
+        console.log('data_ready', data_ready)
+
+        svg.selectAll('piechart')
+            .data(data_ready)
+            .join('path')
+            .attr('d', d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius)
+            )
+            .attr('fill', function(d){ return color(d[0]) })
+            .attr("stroke", "black")
+            .style("stroke-width", "2px")
+            .style("opacity", 0.7)
+
+    });
+
+</script> 
+</html>
