@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="//lib.aga.my/blueprint/3/normalize.css"/>
+    <link type="text/css" rel="stylesheet" href="//lib.aga.my/blueprint/3/blueprint-icons.css"/>
+    <link type="text/css" rel="stylesheet" href="//lib.aga.my/blueprint/3/blueprint.css"/>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <style>
+        text {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+</body>
+
+
+<script>
+
+    let comma = d3.format(",");
+
+    let url = "cities_commuter.csv";
+
+    d3.csv(url).then(function(data){
+
+        data.forEach(d=>{
+            d['Drove_Alone']            = +d['Drove_Alone'];
+            d['Carpooled']              = +d['Carpooled'];
+            d['Public_Transportation']  = +d['Public_Transportation'];
+            d['Walked']                 = +d['Walked'];
+            d['Bicycle']                = +d['Bicycle'];
+            d['Taxi_Motorcycle']        = +d['Taxi_Motorcycle'];
+            d['Work_at_Home']           = +d['Work_at_Home'];
+        });
+
+        d3.select('body')
+            .call(sel=>{
+                
+                sel.append('h3').html('Commuters in Top Congested American Cities, 2000-2014');
+
+                sel.append('table')
+                    .attr('class','table-1 bp3-html-table bp3-html-table-bordered bp3-html-table-condensed bp3-html-table-striped')
+                    .call(sel=>{
+
+                        sel.append('thead')
+                            .append('tr')
+                            .selectAll('th')
+                            .data(data['columns'])
+                            .enter()
+                            .append('th')
+                            .style('cursor','pointer')
+                            .html(d=>d);
+
+                        sel.append('tbody')
+                            .selectAll('tr')
+                            .data(data)
+                            .enter()
+                            .append('tr')
+                            .call(sel=>{
+                                data['columns'].forEach(k=>{
+                                    sel.append('td')
+                                        .style('text-align','left')
+                                        .html(d=>    
+                                             k == 'Drove_Alone' ? comma(d[k])
+                                            :k == 'Carpooled' ? comma(d[k])
+                                            :k == 'Public_Transportation' ? comma(d[k])
+                                            :k == 'Walked' ? comma(d[k])
+                                            :k == 'Bicycle' ? comma(d[k])
+                                            :k == 'Taxi_Motorcycle' ? comma(d[k])
+                                            :k == 'Work_at_Home' ? comma(d[k])
+                                            :d[k]
+                                        )
+                                });
+                            });
+                    });
+            });
+
+    });
+
+</script>
+</html>
