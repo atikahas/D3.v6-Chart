@@ -25,7 +25,7 @@
         });
         console.log('data', data);
 
-        let cities = d3.group(data, d => d.City);
+        let cities = d3.groups(data, d => d.City);
         console.log('cities',cities);
 
         const svg = d3.select("#multiplebar")
@@ -55,7 +55,7 @@
 
         // Colour palette
         const color = d3.scaleOrdinal()
-            .domain(allKeys)
+            //.domain(allKeys)
             .range(d3.schemeDark2)
 
         // Bars
