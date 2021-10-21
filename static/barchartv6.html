@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v6.js"></script>
+</head>
+
+<body>
+    <div id="multiplebar"></div>  
+</body>      
+
+<script>
+    let margin = {top: 30, right: 18, bottom: 30, left: 50},
+        width = 250 - margin.left - margin.right,
+        height = 100 - margin.top - margin.bottom;
+    
+    let url = "cities_commuter.csv";
+
+    d3.csv(url).then(function(data){
+
+        data.forEach(d =>{
+            for(var i in d){
+                if(!['City','Year'].includes(i)){
+                    d[i] = +d[i];
+                }
+            }
+        });
+        console.log('data', data);
+
+        let cities = d3.group(data, d => d.City);
+        console.log('cities',cities);
+
+        const svg = d3.select("#multiplebar")
+            .selectAll("barChart")
+            .data(cities)
+            .enter()
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3.scaleBand()
+            .range([ 0, width ])
+            .domain(d3.map(data, function(d) { return d.Year; }))
+            .padding(0.2);
+        svg.append("g")
+            .attr("transform", `translate(0, ${height})`)
+            .call(d3.axisBottom(x).ticks(3));
+
+        // Y Axis
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { return +d.Bicycle; })])
+            .range([ height, 0 ]);
+        svg.append("g")
+            .call(d3.axisLeft(y).ticks(5));
+
+        // Colour palette
+        const color = d3.scaleOrdinal()
+            //.domain(allKeys)
+            .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#c30771','#a65628','#f781bf','#999999'])
+
+        // Bars
+        svg.selectAll(".bar")
+            .data(cities)
+            .join("rect")
+            .attr("x", function(d) { return x(d.Year); })
+            .attr("y", function(d) { return y(d.Bicycle); })
+            .attr("width", x.bandwidth())
+            .attr("height", function(d) { return height - y(d.Bicycle); })
+            .attr("fill", "#69b3a2")
+
+        // Title
+        svg.append("text")
+            .attr("text-anchor", "start")
+            .attr("y", -5)
+            .attr("x", 0)
+            .text(function(d){ return(d[0])})
+            .style("fill", function(d){ return color(d[0]) })
+
+    });
+
+</script> 
+</html>
