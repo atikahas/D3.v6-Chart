@@ -25,7 +25,13 @@
         });
         console.log('data', data);
 
-        let cities = d3.groups(data, d => d.City);
+        // make year ascending order
+        test = data.slice().sort((a,b) => d3.ascending(a.Year , b.Year));
+        console.log('test',test)
+
+        let cities = d3.groups(test, d => d.City);
+
+
         console.log('cities',cities);
 
         const svg = d3.select("#multiplebar")
@@ -38,35 +44,42 @@
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        // X Axis
         const x = d3.scaleBand()
             .range([ 0, width ])
-            .domain(d3.map(data, function(d) { return d.Year; }))
+            .domain(d3.map(test, function(d) { return d.Year; }))
             .padding(0.2);
         svg.append("g")
             .attr("transform", `translate(0, ${height})`)
             .call(d3.axisBottom(x).ticks(3));
 
         // Y Axis
+        const maxY = d3.max(data, function(d) { return +d.Bicycle; });
+        console.log('maxY',maxY);
+
         const y = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return +d.Bicycle; })])
+            .domain([0, maxY ])
             .range([ height, 0 ]);
+
+        console.log('y', y.domain(), y.range(), y(maxY));
+
+
         svg.append("g")
             .call(d3.axisLeft(y).ticks(5));
 
         // Colour palette
         const color = d3.scaleOrdinal()
-            //.domain(allKeys)
             .range(d3.schemeDark2)
 
-        // Bars
-        svg.selectAll(".bar")
-            .data(function(d){return d.values;})
+        // // Bars
+        svg.selectAll("rect")
+            .data(cities, function(d){ return(d[0])})
             .join("rect")
             .attr("x", function(d) { return x(d.Year); })
             .attr("y", function(d) { return y(d.Bicycle); })
             .attr("width", x.bandwidth())
-            .attr("height", function(d) { return height - y(d.Bicycle); })
-            .attr("fill", "#69b3a2")
+            .attr("height", function(d) { console.log('d',d, 'd.Bicycle:', d.Bicycle ); return height - y(d[1][0].Bicycle); })
+            .attr("fill",  function(d){ return color(d[0]) })
 
         // Title
         svg.append("text")
