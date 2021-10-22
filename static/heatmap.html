@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v6.js"></script>
+</head>
+
+<body>
+    <div id="heatmap"></div>  
+</body>      
+
+<script>
+    const margin = {top: 30, right: 30, bottom: 30, left: 30},
+        width = 450 - margin.left - margin.right,
+        height = 450 - margin.top - margin.bottom;
+
+    const svg = d3.select("#heatmap")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const city = ["LA", "SF", "NY", "B", "S", "C", "H", "D", "M"];
+    const year = ["2010", "2011", "2012", "2013", "2014"];
+
+    // Build X scales and axis:
+    const x = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(year)
+        .padding(0.05);
+    svg.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x))
+
+    // Build X scales and axis:
+    const y = d3.scaleBand()
+        .range([ height, 0 ])
+        .domain(city)
+        .padding(0.05);
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    let url = "cities_commuter.csv";
+    // let url = "heatmap.csv";
+
+    d3.csv(url).then(function(data){
+
+        data.forEach(d =>{
+            for(var i in d){
+                if(!['City'].includes(i)){
+                    d[i] = +d[i];
+                }
+            }
+        });
+        console.log('data',data);
+
+        //use only column City,Year and Bicycle
+        let bicycle = data.map(d=>{
+            return{
+                City: d.City,
+                Year: d.Year,
+                Bicycle: d.Bicycle,
+            }
+        });
+        console.log('bicycle', bicycle);
+
+        // Colour Scale
+        const myColor = d3.scaleLinear()
+            .range([ "#ffc107", "orange"])
+            .domain([d3.min(bicycle, function(d) { return +d.Bicycle; }), 
+                    d3.max(bicycle, function(d) { return +d.Bicycle; })]);
+        
+        svg.selectAll()
+            .data(bicycle, function(d) {return d.Year+':'+d.City;})
+            .join("rect")
+            .attr("x", function(d) { return x(d.Year) })
+            .attr("y", function(d) { return y(d.City) })
+            .attr("width", x.bandwidth() )
+            .attr("height", y.bandwidth() )
+            .style("fill", function(d) { return myColor(d.Bicycle)} )
+
+    });
+    
+</script>
