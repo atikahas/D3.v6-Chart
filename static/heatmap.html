@@ -54,8 +54,12 @@
         });
         console.log('data',data);
 
+        // make year ascending order
+        test = data.slice().sort((a,b) => d3.ascending(a.Year , b.Year));
+        console.log('test',test);
+
         //use only column City,Year and Bicycle
-        let bicycle = data.map(d=>{
+        let bicycle = test.map(d=>{
             return{
                 City: d.City,
                 Year: d.Year,
