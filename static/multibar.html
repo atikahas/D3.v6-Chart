@@ -18,7 +18,7 @@
 
         data.forEach(d =>{
             for(var i in d){
-                if(!['City','Year'].includes(i)){
+                if(!['City'].includes(i)){
                     d[i] = +d[i];
                 }
             }
@@ -73,13 +73,14 @@
 
         // // Bars
         svg.selectAll("rect")
-            .data(cities, function(d){ return(d[0])})
-            .join("rect")
-            .attr("x", function(d) { return x(d.Year); })
-            .attr("y", function(d) { return y(d.Bicycle); })
-            .attr("width", x.bandwidth())
-            .attr("height", function(d) { console.log('d',d, 'd.Bicycle:', d.Bicycle ); return height - y(d[1][0].Bicycle); })
-            .attr("fill",  function(d){ return color(d[0]) })
+        svg.selectAll("rect")
+            .data(d=>d[1], function(d){ return d.Year})
+                .join("rect")
+                .attr("x", function(d) { return x(d.Year); })
+                .attr("y", function(d) { return y(d.Bicycle); })
+                .attr("width", x.bandwidth())
+                .attr("height", function(d) { return height - y(d.Bicycle); })
+                .attr("fill",  function(d){ return color(d[1]) });
 
         // Title
         svg.append("text")
