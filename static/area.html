@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v6.js"></script>
+</head>
+
+<body>
+    <div id="linechart"></div>  
+</body>      
+
+<script>
+
+    const margin = {top: 30, right: 30, bottom: 30, left: 80},
+        width = 450 - margin.left - margin.right,
+        height = 450 - margin.top - margin.bottom;
+
+    const svg = d3.select("#linechart")
+        .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    let url = "cities_commuter.csv";
+
+    d3.csv(url).then(function(data){
+
+        data.forEach(d =>{
+            for(var i in d){
+                if(!['City'].includes(i)){
+                    d[i] = +d[i];
+                }
+            }
+        });
+        console.log('data',data);
+
+        let cities = d3.group(data, d => d.City);
+        console.log('cities', cities);
+
+        // X axis label
+        let xAxis = d3.extent(data, function(d){ return +d.Year; })
+        console.log('xAxis', xAxis);
+
+        // Y axis label
+        let yAxis = d3.max(data, function(d){ return +d.Bicycle; });
+        console.log('yAxis', yAxis);
+
+        // Colour pallete
+        const color = d3.scaleOrdinal()
+            .range(d3.schemeDark2)
+
+        // X axis
+        const x = d3.scaleLinear()
+            .domain(xAxis)
+            .range([0, width]);
+        svg.append('g')
+            .attr('transform', `translate(0, ${height})`)
+            .call(d3.axisBottom(x).ticks(5));
+
+        // Y axis
+        const y = d3.scaleLinear()
+            .domain([0,yAxis])
+            .range([height,0]);
+        svg.append('g')
+            .call(d3.axisLeft(y));
+
+        // add line
+        svg.selectAll('.line')
+            .data(cities)
+            .join('path')
+            .attr('fill', 'none')
+            .attr('stroke', function(d){ return color(d[0]) })
+            .attr('stroke-width', 1.5)
+            .attr('d', function(d){
+                return d3.line()
+                    .x(function(d){ return x(d.Year)})
+                    .y(function(d){ return y(d.Bicycle)})
+                    (d[1])
+            });
+
+        // add circle
+        svg.selectAll('myCircle')
+            .data(data)
+            .join('circle')
+                .attr("fill", function(d){ return color(d[0]) })
+                .attr("stroke", "none")
+                .attr("cx", function(d){ return x(d.Year)})
+                .attr("cy", function(d){ return y(d.Bicycle)})
+                .attr("r", 3)
+
+
+    });
+
+</script>
+</html>
