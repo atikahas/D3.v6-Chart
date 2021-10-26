@@ -77,7 +77,7 @@
       .join("rect")
       .attr("x", x(0))
       .attr("y", function(d) { return y(d.Year); })
-      .attr("width", function(d) { return width - x(+d.Bicycle); })
+      .attr("width", function(d) { return width - x(d.Bicycle); })
       .attr("height", y.bandwidth())
       .attr("fill",  function(d){ return color(d[1]) })
 
