@@ -30,8 +30,6 @@
         console.log('test',test)
 
         let cities = d3.groups(test, d => d.City);
-
-
         console.log('cities',cities);
 
         const svg = d3.select("#multiplebar")
@@ -72,7 +70,6 @@
             .range(d3.schemeDark2)
 
         // // Bars
-        svg.selectAll("rect")
         svg.selectAll("rect")
             .data(d=>d[1], function(d){ return d.Year})
                 .join("rect")
