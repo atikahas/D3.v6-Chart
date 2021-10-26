@@ -3,7 +3,11 @@
     <meta charset="utf-8">
     <script src="https://d3js.org/d3.v6.js"></script>
 </head>
-
+<style>
+    .yaxis path, .xaxis path {
+        stroke: none;
+    }
+</style>
 <body>
     <div id="heatmap"></div>  
 </body>      
@@ -67,6 +71,7 @@
             .domain(xAxis)
             .padding(0.05);
         svg.append("g")
+            .attr("class", "axis xaxis")
             .attr("transform", `translate(0, ${height})`)
             .call(d3.axisBottom(x))
 
@@ -76,6 +81,7 @@
             .domain(yAxis)
             .padding(0.05);
         svg.append("g")
+            .attr("class", "axis yaxis")
             .call(d3.axisLeft(y));
         
         svg.selectAll()
