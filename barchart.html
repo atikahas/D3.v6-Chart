@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <title>D3-js Version 6</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link type="text/css" rel="stylesheet" href="//lib.aga.my/blueprint/3/blueprint.css"/>
+        <link type="text/css" rel="stylesheet" href="//lib.aga.my/blueprint/3/blueprint-icons.css"/>
+        <link type="text/css" rel="stylesheet" href="//lib.aga.my/blueprint/3/normalize.css"/>
+        <script type="text/javascript" src="//lib.aga.my/d3/7.0.3/d3.min.js"></script>
+    </head>
+    <style>
+        .container{
+            margin: auto;
+            width: 95%;
+            padding: auto;
+        }
+    </style>
+
+    <nav class="bp3-navbar">
+        <div class="bp3-navbar-group bp3-align-left">
+            <div class="bp3-navbar-heading">D3-js Version 6</div>
+        </div>
+        <div class="bp3-navbar-group bp3-align-right">
+            <button type="button" class="bp3-menu-item bp3-icon-flash">Light</button>
+        </div>
+    </nav>
+    <br>
+    
+    <body class="bp3-dark" style="background:#10161A;">
+        <div class="content">
+            <div class="container">
+                <div class="row"> 
+                    <div class="bp3-card bp3-interactive col-sm">
+                        <h5>Multiple Horizontal </h5>
+                        <iframe src="static/multihbar.html" frameborder="0" height="480" width="100%"></iframe>
+                    </div>
+                </div>
+                <br>
+                <div class="row"> 
+                    <div class="bp3-card bp3-interactive col-sm">
+                        <h5>Multiple Vertical</h5>
+                        <iframe src="static/multivbar.html" frameborder="0" height="328" width="100%"></iframe>
+                    </div>
+                </div>
+                <br>
+                <div class="row"> 
+                    <div class="bp3-card bp3-interactive col-sm">
+                        <h5>Horizontal</h5>
+                        <iframe src="static/hbar.html" frameborder="0" height="328" width="100%"></iframe>
+                    </div>
+                    <div class="bp3-card bp3-interactive col-sm">
+                        <h5>Vertical</h5>
+                        <iframe src="static/hbar.html" frameborder="0" height="328" width="100%"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+<script>
+	// toggle dark mode
+	d3.select('.bp3-icon-flash')
+		.on('click',function(e,d){
+
+			let sel = d3.select(this),
+					dark	= sel.classed('bp3-icon-flash');
+
+			sel
+				.classed('bp3-icon-flash', !dark)
+				.classed('bp3-icon-moon', dark)
+				.html( dark ? 'Dark' : 'Light' );
+
+			d3.select('body')
+				.classed('bp3-dark', !dark)
+				.style('background', dark ? '#fff' : '#10161A');
+
+			d3.selectAll('text')
+				.attr('fill', !dark ? '#fff' : '#10161A');
+
+		});
+</script>
+</html>
